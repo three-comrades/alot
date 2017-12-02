@@ -266,7 +266,7 @@ class SendCommand(Command):
             ui.clear_notify([clearme])
             failure.trap(SendingMailFailed)
             logging.error(failure.getTraceback())
-            errmsg = 'failed to send: %s' % failure.value
+            errmsg = 'failed to send. See log for details: %s' % failure.value
             ui.notify(errmsg, priority='error', block=True)
 
         def store_errb(failure):
