@@ -152,6 +152,8 @@ thread_statusbar = mixed_list(string, string, default=list('[{buffer_no}: thread
 # that will be substituted accordingly.
 taglist_statusbar = mixed_list(string, string, default=list('[{buffer_no}: taglist]','{input_queue} total messages: {total_messages}'))
 
+querylist_statusbar = mixed_list(string, string, default=list('[{buffer_no}: querylist]',''))
+
 # Format of the status-bar in envelope mode.
 # This is a pair of strings to be left and right aligned in the status-bar.
 # Apart from the global variables listed at :ref:`bufferlist_statusbar <bufferlist-statusbar>`

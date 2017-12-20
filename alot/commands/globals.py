@@ -555,6 +555,32 @@ class TagListCommand(Command):
         else:
             ui.buffer_open(buffers.TagListBuffer(ui, tags, self.filtfun))
 
+@registerCommand(MODE, 'querylist', arguments=[
+    (['--queries'], {'nargs': '+', 'help': 'saved queries to display'}),
+])
+class QueryListCommand(Command):
+    """opens saved queries buffer"""
+    def __init__(self, filtfun=lambda x: x, queries=None, **kwargs):
+        """
+        :param filtfun: filter to apply to displayed list
+        :type filtfun: callable (str->bool)
+        :param queries: list of names of the saved queries to display
+        """
+        self.filtfun = filtfun
+        self.queries = queries
+        Command.__init__(self, **kwargs)
+
+    def apply(self, ui):
+        queries = self.queries or ui.dbman.get_all_saved_queries()
+        qlists = ui.get_buffers_of_type(buffers.QueryListBuffer)
+        if qlists:
+            query = qlists[0]
+            buf.queries = queries
+            buf.rebuild()
+            ui.buffer_focus(buf)
+        else:
+            ui.buffer_open(buffers.QueryListBuffer(ui, queries, self.filtfun))
+
 
 @registerCommand(MODE, 'flush')
 class FlushCommand(Command):

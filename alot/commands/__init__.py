@@ -40,6 +40,7 @@ COMMANDS = {
     'envelope': {},
     'bufferlist': {},
     'taglist': {},
+    'querylist': {},
     'thread': {},
     'global': {},
 }

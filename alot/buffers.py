@@ -16,6 +16,7 @@ from .walker import PipeWalker
 from .helper import shorten_author_string
 from .db.errors import NonexistantObjectError
 from .widgets.globals import TagWidget
+from .widgets.querylist import QuerylineWidget
 from .widgets.globals import HeadersList
 from .widgets.globals import AttachmentWidget
 from .widgets.bufferlist import BufferlineWidget
@@ -700,3 +701,57 @@ class TagListBuffer(Buffer):
         cols, _ = self.taglist.get_focus()
         tagwidget = cols.original_widget.get_focus()
         return tagwidget.tag
+
+
+class QueryListBuffer(Buffer):
+    """lists all saved queries present in the notmuch database"""
+
+    modename = 'querylist'
+
+    def __init__(self, ui, allqueries=None, filtfun=lambda x: x):
+        self.filtfun = filtfun
+        self.ui = ui
+        self.queries = allqueries or []
+        self.isinitialized = False
+        self.rebuild()
+        Buffer.__init__(self, ui, self.body)
+
+    def rebuild(self):
+        if self.isinitialized:
+            focusposition = self.querylist.get_focus()[1]
+        else:
+            focusposition = 0
+            self.isinitialized = True
+
+        lines = list()
+        displayedqueries = sorted((q for q in self.queries if self.filtfun(q)),
+                                   key=unicode.lower)
+        print(type(displayedqueries))
+        for (num, q) in enumerate(displayedqueries):
+            if (num % 2) == 0:
+                attr = settings.get_theming_attribute('querylist', 'line_even')
+            else:
+                attr = settings.get_theming_attribute('querylist', 'line_odd')
+            focus_att = settings.get_theming_attribute('querylist', 'line_focus')
+
+            line = urwid.AttrMap(QuerylineWidget(q), attr, focus_att)
+            lines.append(line)
+
+        self.querylist = urwid.ListBox(urwid.SimpleListWalker(lines))
+        self.body = self.querylist
+
+        self.querylist.set_focus(focusposition % len(displayedqueries))
+
+    def focus_first(self):
+        """Focus the first line in the query list."""
+        self.body.set_focus(0)
+
+    def focus_last(self):
+        allpos = self.querylist.body.positions(reverse=True)
+        if allpos:
+            lastpos = allpos[0]
+            self.body.set_focus(lastpos)
+
+    def get_selected_query(self):
+        """returns selected query"""
+        return self.querylist.get_focus()[0].original_widget.query

@@ -58,6 +58,9 @@ q = exit
 [taglist]
     enter = select
 
+[querylist]
+    enter = select
+
 [thread]
     enter = select
     C = fold *
