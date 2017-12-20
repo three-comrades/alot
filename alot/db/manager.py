@@ -305,6 +305,36 @@ class DBManager(object):
         db = Database(path=self.path)
         return [t for t in db.get_all_tags()]
 
+    def set_saved_query(self, name, query):
+        """
+        Save a new saved query.
+        :param name: the name of the query, without the `query.` prefix.
+        :param query: the query as str, empty to delete the query
+        """
+        db = Database(path=self.path)
+        try:
+            db.set_config('query.{}'.format(name), query)
+        except NotmuchError:
+            raise DatabaseError('Error when setting the query: `%s`' % query)
+
+    def get_saved_query(self, name):
+        """
+        returns the saved query, or an empty string, if it doesn't exist.
+        :param name: the name of the query
+        :rtype: str
+        """
+        db = Database(path=self.path)
+        return db.get_config(name)
+
+    def get_all_saved_queries(self):
+        """
+        returns the names of all saved queries stored in the database without
+        the `query.` prefix.
+        :rtype: list of query names
+        """
+        db = Database(path=self.path)
+        return [k.split('query.', 1)[1] for k, _ in db.get_configs('query.')]
+
     def async(self, cbl, fun):
         """
         return a pair (pipe, process) so that the process writes
