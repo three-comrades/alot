@@ -86,7 +86,7 @@ def main():
         root_logger.removeHandler(log_handler)
     root_logger = None
     numeric_loglevel = getattr(logging, options.debug_level.upper(), None)
-    logformat = '%(levelname)s:%(module)s:%(message)s'
+    logformat = u'%(levelname)s:%(module)s:%(message)s'
     logging.basicConfig(level=numeric_loglevel, filename=options.logfile,
                         filemode='w', format=logformat)
 
