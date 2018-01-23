@@ -227,7 +227,7 @@ class AbooksCompleter(Completer):
             try:
                 res = res + abook.lookup(prefix)
             except AddressbookError as e:
-                raise CompletionError(e)
+                raise CompletionError(e.message)
         if self.addressesonly:
             returnlist = [(addr, len(addr)) for (name, addr) in res]
         else:
